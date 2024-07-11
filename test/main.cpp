@@ -79,7 +79,7 @@
 [[maybe_unused]] static auto TestParserViaSys() -> void
 {
     ZQF::ZxArg::Parser arg;
-    arg.AddCmd("-name", "your name [opt]", "xiao");
+    arg.AddCmd("-name", "your name [default=xiao]", "xiao");
     arg.AddCmd("-sex", "your sex");
     arg.AddCmd("-age", "your age");
     arg.AddCmd("-weight", "your weight");

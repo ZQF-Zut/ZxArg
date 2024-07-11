@@ -15,10 +15,9 @@ namespace ZQF::ZxArg
     class Parser
     {
     private:
-        std::string_view m_msProgramPath;
-        std::vector<std::string_view> m_vcExample;
-        std::unordered_map<std::string_view, Value> m_mpCmd;
         std::vector<std::string> m_vcArgData;
+        std::vector<std::string_view> m_vcExample;
+        std::unordered_map<std::string_view, ZxArg::Value> m_mpCmd;
 
     public:
         Parser()
@@ -29,9 +28,7 @@ namespace ZQF::ZxArg
     private:
         bool ParseData()
         {
-            if (m_vcArgData.size() < 1) { throw std::runtime_error("ZxArg::Parser::Parse(): arg count error!"); }
-
-            m_msProgramPath = m_vcArgData[0];
+            if (m_vcArgData.size() < 1) { throw std::runtime_error("ZxArg::Parser::Parse(): arg empty!"); }
 
             if (m_vcArgData.size() == 1)
             {
@@ -39,7 +36,7 @@ namespace ZQF::ZxArg
                 return false;
             }
 
-            if ((m_vcArgData.size() % 2) == 0) { throw std::runtime_error("ZxArg::Parser::Parse(): error arg count!"); }
+            if ((m_vcArgData.size() % 2) == 0) { throw std::runtime_error("ZxArg::Parser::Parse(): arg count error!"); }
 
             for (size_t ite_arg = 1; ite_arg < m_vcArgData.size(); ite_arg += 2)
             {
@@ -94,7 +91,7 @@ namespace ZQF::ZxArg
             for (auto& exp : m_vcExample)
             {
                 help_log.append(1, '\t');
-                help_log.append(m_msProgramPath);
+                help_log.append(m_vcArgData.front());
                 help_log.append(1, ' ');
                 help_log.append(exp);
                 help_log.append(1, '\n');
@@ -125,12 +122,12 @@ namespace ZQF::ZxArg
         {
             if (auto ite_map = m_mpCmd.find(msOption.data()); ite_map != m_mpCmd.end())
             {
-                if (ite_map->second.GetValue().empty()) { throw std::runtime_error(std::format("ZxArg::Parser::operator[](): cmd {} is empty!", msOption)); }
+                if (ite_map->second.GetValue().empty()) { throw std::runtime_error(std::format("ZxArg::Parser::operator[](): arg {} is empty!", msOption)); }
                 return ite_map->second;
             }
             else
             {
-                throw std::runtime_error(std::format("ZxArg::Parser::operator[](): cmd {} is not find!", msOption));
+                throw std::runtime_error(std::format("ZxArg::Parser::operator[](): arg {} is not find!", msOption));
             }
         }
     };

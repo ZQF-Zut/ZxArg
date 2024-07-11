@@ -34,6 +34,7 @@ namespace ZQF::ZxArg
 
         std::string_view cmd_line_str{ cmd_line_buffer.get(), cmd_line_bytes };
 
+        // parse
         size_t sub_str_beg{};
         for (size_t idx{}; idx < cmd_line_str.size(); idx++)
         {
@@ -63,6 +64,7 @@ namespace ZQF::ZxArg
             }
         }
 
+        // read last value
         if (sub_str_beg < cmd_line_str.size())
         {
             cmd_line_vec.emplace_back(std::string{ cmd_line_str.data() + sub_str_beg , cmd_line_str.data() + cmd_line_str.size() });
