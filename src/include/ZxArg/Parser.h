@@ -26,13 +26,13 @@ namespace ZQF::ZxArg
         }
 
     private:
-        bool ParseData()
+        bool ParseData(bool isShowHelp = true)
         {
             if (m_vcArgData.size() < 1) { throw std::runtime_error("ZxArg::Parser::Parse(): arg empty!"); }
 
             if (m_vcArgData.size() == 1)
             {
-                this->ShowHelp();
+                if (isShowHelp) { this->ShowHelp(); }
                 return false;
             }
 
@@ -57,20 +57,16 @@ namespace ZQF::ZxArg
         }
 
     public:
-        bool Parse()
+        bool Parse(bool isShowHelp = true)
         {
             m_vcArgData = ZxArg::GetCmdLine();
-            return this->ParseData();
+            return this->ParseData(isShowHelp);
         }
 
-        bool Parse(int argc, char** argv)
+        bool Parse(int argc, char** argv, bool isShowHelp = true)
         {
-            for (size_t idx = 0; idx < static_cast<size_t>(argc); idx++)
-            {
-                m_vcArgData.emplace_back(argv[idx]);
-            }
-
-            return this->ParseData();
+            for (size_t idx = 0; idx < static_cast<size_t>(argc); idx++) { m_vcArgData.emplace_back(argv[idx]); }
+            return this->ParseData(isShowHelp);
         }
 
         void ShowHelp()
@@ -104,10 +100,7 @@ namespace ZQF::ZxArg
         {
             auto& val_ref = m_mpCmd.operator[](msOption.data());
             val_ref.SetHelp(msHelp);
-            if (!msDefaultVal.empty())
-            {
-                val_ref.SetValue(msDefaultVal);
-            }
+            if (!msDefaultVal.empty()) { val_ref.SetValue(msDefaultVal); }
         }
 
         void AddExample(const std::string_view msExample)
@@ -125,10 +118,8 @@ namespace ZQF::ZxArg
                 if (ite_map->second.GetValue().empty()) { throw std::runtime_error(std::format("ZxArg::Parser::operator[](): arg {} is empty!", msOption)); }
                 return ite_map->second;
             }
-            else
-            {
-                throw std::runtime_error(std::format("ZxArg::Parser::operator[](): arg {} is not find!", msOption));
-            }
+
+            throw std::runtime_error(std::format("ZxArg::Parser::operator[](): arg {} is not find!", msOption));
         }
     };
 }
