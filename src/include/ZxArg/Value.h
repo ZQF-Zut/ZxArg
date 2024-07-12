@@ -51,18 +51,17 @@ namespace ZQF::ZxArg
         {
             if constexpr (std::is_same_v<T, bool>)
             {
-                if (this->GetValue() == "true")
+                std::string_view value = this->GetValue();
+                if (value == "true" || value == "yes")
                 {
                     return true;
                 }
-                else if (this->GetValue() == "false")
+                else if (value == "false" || value == "no")
                 {
                     return false;
                 }
-                else
-                {
-                    throw std::runtime_error("ZxArg::Value::Get<bool>(): not bool type");
-                }
+
+                throw std::runtime_error("ZxArg::Value::Get<bool>(): not bool type");
             }
             else if constexpr (std::is_integral_v<T>)
             {
