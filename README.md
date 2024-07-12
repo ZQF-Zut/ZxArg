@@ -1,5 +1,5 @@
 # ZxArg
-command line parser but without argc and argv
+Command Line Parser Without argc and argv
 
 ## Example
 ```cpp
