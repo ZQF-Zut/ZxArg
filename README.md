@@ -28,5 +28,4 @@ auto main(void) -> int
         arg["-weight"].Get<double>(),
         arg["-furry"].Get<bool>() ? "" : "not ");
 }
-}
 ```
