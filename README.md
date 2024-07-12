@@ -15,7 +15,7 @@ auto main(void) -> int
     arg.AddCmd("-sex", "your sex");
     arg.AddCmd("-age", "your age");
     arg.AddCmd("-weight", "your weight");
-    arg.AddCmd("-furry", "married or not");
+    arg.AddCmd("-furry", "furry or not");
     arg.AddExample("-name xiao -sex male -age 16 -furry true -weight 55.5");
     arg.AddExample("-name lee -sex female -age 15 -furry false -weight 50.65");
 
