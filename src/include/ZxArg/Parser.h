@@ -12,12 +12,32 @@
 
 namespace ZQF::ZxArg
 {
+    // https://www.cppstories.com/2021/heterogeneous-access-cpp20/
+    struct string_hash
+    {
+        using is_transparent = void;
+        [[nodiscard]] size_t operator()(const char* cpKey) const
+        {
+            return std::hash<std::string_view>{}(cpKey);
+        }
+
+        [[nodiscard]] size_t operator()(const std::string_view msKey) const
+        {
+            return std::hash<std::string_view>{}(msKey);
+        }
+
+        [[nodiscard]] size_t operator()(const std::string& msKey) const
+        {
+            return std::hash<std::string>{}(msKey);
+        }
+    };
+
     class Parser
     {
     private:
         std::vector<std::string> m_vcArgData;
         std::vector<std::string_view> m_vcExample;
-        std::unordered_map<std::string_view, ZxArg::Value> m_mpCmd;
+        std::unordered_map<std::string_view, ZxArg::Value, string_hash, std::equal_to<>> m_mpCmd;
 
     public:
         Parser()
@@ -45,11 +65,11 @@ namespace ZQF::ZxArg
 
                 if ((value.size()) && (value.front() == '\"') && (value.back() == '\"'))
                 {
-                    m_mpCmd[option.data()].SetValue(value.substr(1, value.size() - 2));
+                    m_mpCmd[option].SetValue(value.substr(1, value.size() - 2));
                 }
                 else
                 {
-                    m_mpCmd[option.data()].SetValue(value);
+                    m_mpCmd[option].SetValue(value);
                 }
             }
 
@@ -98,7 +118,7 @@ namespace ZQF::ZxArg
 
         void AddCmd(const std::string_view msOption, const std::string_view msHelp, const std::string_view msDefaultVal = "")
         {
-            auto& val_ref = m_mpCmd.operator[](msOption.data());
+            auto& val_ref = m_mpCmd[msOption];
             val_ref.SetHelp(msHelp);
             if (!msDefaultVal.empty()) { val_ref.SetValue(msDefaultVal); }
         }
@@ -113,7 +133,7 @@ namespace ZQF::ZxArg
 
         const Value& operator[](const std::string_view msOption)
         {
-            if (auto ite_map = m_mpCmd.find(msOption.data()); ite_map != m_mpCmd.end())
+            if (auto ite_map = m_mpCmd.find(msOption); ite_map != m_mpCmd.end())
             {
                 if (ite_map->second.GetValue().empty()) { throw std::runtime_error(std::format("ZxArg::Parser::operator[](): arg {} is empty!", msOption)); }
                 return ite_map->second;
