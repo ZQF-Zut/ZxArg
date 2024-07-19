@@ -87,7 +87,7 @@
     arg.AddCmd("-sex", "your sex");
     arg.AddCmd("-age", "your age");
     arg.AddCmd("-weight", "your weight");
-    arg.AddCmd("-furry", "married or not");
+    arg.AddCmd("-furry", "furry or not");
     arg.AddExample("-name xiao -sex male -age 16 -furry true -weight 55.5");
 
     if (!arg.Parse()) { return; }

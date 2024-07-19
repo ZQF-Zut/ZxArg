@@ -22,9 +22,9 @@ namespace ZQF::ZxArg
                 auto cmd_line_ptr = ::GetCommandLineW();
                 auto cmd_line_chars = ::wcslen(cmd_line_ptr);
 
-                const auto bytes = static_cast<size_t>(::WideCharToMultiByte(CP_UTF8, 0, cmd_line_ptr, static_cast<int>(cmd_line_chars), nullptr, 0, nullptr, nullptr));
-                auto buffer = std::make_unique_for_overwrite<char[]>(bytes + 1);
-                const auto bytes_real = static_cast<size_t>(::WideCharToMultiByte(CP_UTF8, 0, cmd_line_ptr, static_cast<int>(cmd_line_chars), buffer.get(), static_cast<int>(bytes), nullptr, nullptr));
+                const size_t buffer_max_bytes = (cmd_line_chars * sizeof(wchar_t) + 1) * 2;
+                auto buffer = std::make_unique_for_overwrite<char[]>(buffer_max_bytes);
+                const auto bytes_real = static_cast<size_t>(::WideCharToMultiByte(CP_UTF8, 0, cmd_line_ptr, static_cast<int>(cmd_line_chars), buffer.get(), static_cast<int>(buffer_max_bytes), nullptr, nullptr));
                 buffer[bytes_real] = {};
 
                 return { static_cast<size_t>(bytes_real), std::move(buffer) };
