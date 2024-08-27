@@ -70,6 +70,15 @@ namespace ZQF::ZxArg
             cmd_line_vec.emplace_back(std::string{ cmd_line_str.data() + sub_str_beg , cmd_line_str.data() + cmd_line_str.size() });
         }
 
+        // format exe path
+        if (cmd_line_vec.size())
+        {
+            for (auto& char_v : cmd_line_vec.front())
+            {
+                if (char_v == '\\') { char_v = '/'; }
+            }
+        }
+
         return cmd_line_vec;
     }
 #else

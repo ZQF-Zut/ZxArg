@@ -98,16 +98,27 @@ namespace ZQF::ZxArg
             {
                 help_log.append(1,'\t');
                 help_log.append(cmd.first);
-                help_log.append(1, '\t');
+                help_log.append("\t -> ");
                 help_log.append(cmd.second.GetHelp());
                 help_log.append(1, '\n');
+            }
+
+            // get exe pure name
+            std::string_view exe_name{ m_vcArgData.front() };
+            if (const auto pos{ exe_name.rfind('/') }; pos != std::string_view::npos)
+            {
+                exe_name = exe_name.substr(pos + 1);
+                if (exe_name.ends_with('"'));
+                {
+                    exe_name = exe_name.substr(0, exe_name.size() - 1);
+                }
             }
 
             help_log.append("Example:\n");
             for (auto& exp : m_vcExample)
             {
                 help_log.append(1, '\t');
-                help_log.append(m_vcArgData.front());
+                help_log.append(exe_name);
                 help_log.append(1, ' ');
                 help_log.append(exp);
                 help_log.append(1, '\n');
