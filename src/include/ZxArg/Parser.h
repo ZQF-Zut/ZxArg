@@ -108,7 +108,7 @@ namespace ZQF::ZxArg
             if (const auto pos{ exe_name.rfind('/') }; pos != std::string_view::npos)
             {
                 exe_name = exe_name.substr(pos + 1);
-                if (exe_name.ends_with('"'));
+                if (exe_name.ends_with('"'))
                 {
                     exe_name = exe_name.substr(0, exe_name.size() - 1);
                 }
