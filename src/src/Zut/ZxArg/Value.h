@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 
-namespace ZQF::ZxArg
+namespace ZQF::Zut::ZxArg
 {
     class Value
     {
@@ -89,4 +89,4 @@ namespace ZQF::ZxArg
         }
     };
 
-}
+} // namespace ZQF::Zut::ZxArg

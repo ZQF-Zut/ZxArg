@@ -1,43 +1,43 @@
 #include <print>
 #include <cassert>
 #include <iostream>
-#include <ZxArg/Parser.h>
+#include <Zut/ZxArg.h>
 
 
 
 [[maybe_unused]] static auto TestValue() -> void
 {
-    ZQF::ZxArg::Value value;
+    ZxArg::Value value;
     value.SetHelp("set the out put path");
     value.SetValue("out_put_dir");
     assert(value.Get<std::string_view>() == "out_put_dir");
     assert(value.GetHelp() == "set the out put path");
 
-    ZQF::ZxArg::Value value1;
+    ZxArg::Value value1;
     value1.SetValue("120");
     assert(value1.Get<std::string>() == "120");
     assert(value1.Get<size_t>() == 120);
 
-    ZQF::ZxArg::Value value2("0x123", "set num");
+    ZxArg::Value value2("0x123", "set num");
     assert(value2.Get<std::string_view>() == "0x123");
     assert(value2.Get<uint32_t>() == 0x123);
     assert(value2.GetHelp() == "set num");
 
-    ZQF::ZxArg::Value value3("false", "is out");
+    ZxArg::Value value3("false", "is out");
     assert(value3.Get<bool>() == false);
 
-    ZQF::ZxArg::Value value4("true", "is out");
+    ZxArg::Value value4("true", "is out");
     assert(value4.Get<bool>() == true);
 
-    ZQF::ZxArg::Value value3_1("yes", "is out");
+    ZxArg::Value value3_1("yes", "is out");
     assert(value3_1.Get<bool>() == true);
 
-    ZQF::ZxArg::Value value4_1("no", "is out");
+    ZxArg::Value value4_1("no", "is out");
     assert(value4_1.Get<bool>() == false);
 
     try
     {
-        ZQF::ZxArg::Value value5("trxe", "is out");
+        ZxArg::Value value5("trxe", "is out");
         [[maybe_unused]] const auto status = value5.Get<bool>();
         assert(false);
     }
@@ -46,7 +46,7 @@
 
     }
 
-    ZQF::ZxArg::Value value6("12.3", "pos x");
+    ZxArg::Value value6("12.3", "pos x");
     assert(value6.Get<double>() != 0.0);
 
     [[maybe_unused]] int x = 0;
@@ -56,7 +56,7 @@
 {
     const char* argv[] = { "game.exe", "-mode", "batch", "-name", "\"[061215][EX12] 雛鳥の堕ちる音\"", "-ver", "1.2", "-size", "10", "-make", "false", "-export", "true" };
 
-    ZQF::ZxArg::Parser arg;
+    ZxArg::Parser arg;
     arg.AddCmd("-name", "game name in filter json file");
     arg.AddCmd("-mode", "mode: [batch]");
     arg.AddCmd("-ver", "version");
@@ -82,14 +82,16 @@
 
 [[maybe_unused]] static auto TestParserViaSys() -> void
 {
-    ZQF::ZxArg::Parser arg;
+    ZxArg::Parser arg;
+    arg.SetAbout("this is a demo");
+    arg.SetAuthor("github.com/Dir-A");
     arg.AddCmd("-name", "your name [default=xiao]", "xiao");
     arg.AddCmd("-sex", "your sex");
     arg.AddCmd("-age", "your age");
     arg.AddCmd("-weight", "your weight");
     arg.AddCmd("-furry", "furry or not");
     arg.AddExample("-name xiao -sex male -age 16 -furry true -weight 55.5");
-
+    
     if (!arg.Parse()) { return; }
 
     std::println("Your name is {}, {}, {} years old, {}kg, {}furry.",

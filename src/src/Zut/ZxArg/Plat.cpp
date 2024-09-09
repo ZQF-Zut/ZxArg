@@ -1,20 +1,15 @@
-#include <ZxArg/Platform.h>
+#include "Plat.h"
 #include <memory>
+
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <stdexcept>
-#elif __linux__
-#include <limits.h>
-#include <fcntl.h>
-#include <unistd.h>
-#endif
 
 
-namespace ZQF::ZxArg
+namespace ZQF::Zut::ZxArg::Plat
 {
-#ifdef _WIN32
     auto GetCmdLine() -> std::vector<std::string>
     {
         auto [cmd_line_bytes, cmd_line_buffer] = []() -> std::pair<size_t, std::unique_ptr<char[]>>
@@ -28,7 +23,7 @@ namespace ZQF::ZxArg
                 buffer[bytes_real] = {};
 
                 return { static_cast<size_t>(bytes_real), std::move(buffer) };
-            }();
+    }();
 
         std::vector<std::string> cmd_line_vec;
 
@@ -80,8 +75,16 @@ namespace ZQF::ZxArg
         }
 
         return cmd_line_vec;
-    }
-#else
+}
+} // namespace ZQF::Zut::ZxArg::Plat
+#elif __linux__
+#include <limits.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+
+namespace ZQF::Zut::ZxArg::Plat
+{
     auto GetCmdLine() -> std::vector<std::string>
     {
         auto fn_get_cmd_line_data = []() -> std::pair<size_t, std::unique_ptr<char[]>>
@@ -106,6 +109,8 @@ namespace ZQF::ZxArg
 
         return cmd_line_vec;
     }
+} // namespace ZQF::Zut::ZxArg::Plat
 #endif
 
-}
+
+

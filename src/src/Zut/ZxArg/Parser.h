@@ -5,12 +5,11 @@
 #include <string_view>
 #include <unordered_map>
 #include <stdexcept>
+#include <Zut/ZxArg/Value.h>
+#include <Zut/ZxArg/Plat.h>
 
-#include <ZxArg/Value.h>
-#include <ZxArg/Platform.h>
 
-
-namespace ZQF::ZxArg
+namespace ZQF::Zut::ZxArg
 {
     // https://www.cppstories.com/2021/heterogeneous-access-cpp20/
     struct string_hash
@@ -35,6 +34,8 @@ namespace ZQF::ZxArg
     class Parser
     {
     private:
+        std::string m_msAbout;
+        std::string m_msAuthor;
         std::vector<std::string> m_vcArgData;
         std::vector<std::string_view> m_vcExample;
         std::unordered_map<std::string_view, ZxArg::Value, string_hash, std::equal_to<>> m_mpCmd;
@@ -46,7 +47,7 @@ namespace ZQF::ZxArg
         }
 
     private:
-        bool ParseData(bool isShowHelp = true)
+        auto ParseData(const bool isShowHelp = true) -> bool
         {
             if (m_vcArgData.size() < 1) { throw std::runtime_error("ZxArg::Parser::Parse(): arg empty!"); }
 
@@ -58,10 +59,10 @@ namespace ZQF::ZxArg
 
             if ((m_vcArgData.size() % 2) == 0) { throw std::runtime_error("ZxArg::Parser::Parse(): arg count error!"); }
 
-            for (size_t ite_arg = 1; ite_arg < m_vcArgData.size(); ite_arg += 2)
+            for (std::size_t ite_arg{ 1 }; ite_arg < m_vcArgData.size(); ite_arg += 2)
             {
-                const std::string_view option = m_vcArgData[ite_arg + 0];
-                const std::string_view value = m_vcArgData[ite_arg + 1];
+                const std::string_view option{ m_vcArgData[ite_arg + 0] };
+                const std::string_view value{ m_vcArgData[ite_arg + 1] };
 
                 if ((value.size()) && (value.front() == '\"') && (value.back() == '\"'))
                 {
@@ -77,32 +78,20 @@ namespace ZQF::ZxArg
         }
 
     public:
-        bool Parse(bool isShowHelp = true)
+        auto Parse(const bool isShowHelp = true) -> bool
         {
-            m_vcArgData = ZxArg::GetCmdLine();
+            m_vcArgData = Plat::GetCmdLine();
             return this->ParseData(isShowHelp);
         }
 
-        bool Parse(int argc, char** argv, bool isShowHelp = true)
+        auto Parse(int argc, char** argv, bool isShowHelp = true) -> bool
         {
             for (size_t idx = 0; idx < static_cast<size_t>(argc); idx++) { m_vcArgData.emplace_back(argv[idx]); }
             return this->ParseData(isShowHelp);
         }
 
-        void ShowHelp()
+        auto ShowHelp() -> void
         {
-            std::string help_log;
-
-            help_log.append("Command:\n");
-            for (auto& cmd : m_mpCmd)
-            {
-                help_log.append(1,'\t');
-                help_log.append(cmd.first);
-                help_log.append("\t -> ");
-                help_log.append(cmd.second.GetHelp());
-                help_log.append(1, '\n');
-            }
-
             // get exe pure name
             std::string_view exe_name{ m_vcArgData.front() };
             if (const auto pos{ exe_name.rfind('/') }; pos != std::string_view::npos)
@@ -114,43 +103,82 @@ namespace ZQF::ZxArg
                 }
             }
 
-            help_log.append("Example:\n");
-            for (auto& exp : m_vcExample)
+            std::string help_log;
+
+            if (m_msAbout.size())
             {
-                help_log.append(1, '\t');
-                help_log.append(exe_name);
-                help_log.append(1, ' ');
-                help_log.append(exp);
-                help_log.append(1, '\n');
+                help_log.append("About  : ").append(m_msAbout).append(1, '\n');
+            }
+
+            if (m_msAuthor.size())
+            {
+                help_log.append("Author : ").append(m_msAuthor).append(1, '\n');
+            }
+
+            help_log.append("Command:\n");
+            for (const auto& cmd : m_mpCmd)
+            {
+                help_log
+                    .append(1, '\t')
+                    .append(cmd.first)
+                    .append("\t -> ")
+                    .append(cmd.second.GetHelp())
+                    .append(1, '\n');
+            }
+
+            help_log.append("Example:\n");
+            for (const auto& exp : m_vcExample)
+            {
+                help_log
+                    .append(1, '\t')
+                    .append("./")
+                    .append(exe_name)
+                    .append(1, ' ')
+                    .append(exp)
+                    .append(1, '\n');
             }
 
             std::printf(help_log.c_str());
         }
 
-        void AddCmd(const std::string_view msOption, const std::string_view msHelp, const std::string_view msDefaultVal = "")
+        auto AddCmd(const std::string_view msOption, const std::string_view msHelp, const std::string_view msDefaultVal = "") -> void
         {
             auto& val_ref = m_mpCmd[msOption];
             val_ref.SetHelp(msHelp);
             if (!msDefaultVal.empty()) { val_ref.SetValue(msDefaultVal); }
         }
 
-        void AddExample(const std::string_view msExample)
+        auto AddExample(const std::string_view msExample) -> void
         {
             m_vcExample.emplace_back(msExample);
         }
 
-        const Value& operator[](int) = delete;
-        const Value& operator[](size_t) = delete;
-
-        const Value& operator[](const std::string_view msOption)
+        auto SetAbout(const std::string_view msAbout)
         {
-            if (auto ite_map = m_mpCmd.find(msOption); ite_map != m_mpCmd.end())
+            m_msAbout.assign(msAbout);
+        }
+
+        auto SetAuthor(const std::string_view msAuthor)
+        {
+            m_msAuthor.assign(msAuthor);
+        }
+
+        auto operator[](int) -> const Value& = delete;
+        auto operator[](std::size_t) -> const Value& = delete;
+
+        auto operator[](const std::string_view msOption) const -> const Value&
+        {
+            if (const auto ite_map = m_mpCmd.find(msOption); ite_map != m_mpCmd.end())
             {
-                if (ite_map->second.GetValue().empty()) { throw std::runtime_error(std::format("ZxArg::Parser::operator[](): arg {} is empty!", msOption)); }
+                if (ite_map->second.GetValue().empty())
+                {
+                    throw std::runtime_error(std::string{ "ZxArg::Parser::operator[](): arg is empty! -> "}.append(msOption));
+                }
+
                 return ite_map->second;
             }
 
-            throw std::runtime_error(std::format("ZxArg::Parser::operator[](): arg {} is not find!", msOption));
+            throw std::runtime_error(std::string("ZxArg::Parser::operator[](): arg is not find! -> ").append(msOption));
         }
     };
-}
+} // namespace ZQF::Zut::ZxArg

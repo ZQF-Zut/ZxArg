@@ -3,7 +3,7 @@
 #include <string>
 
 
-namespace ZQF::ZxArg
+namespace ZQF::Zut::ZxArg::Plat
 {
     auto GetCmdLine() -> std::vector<std::string>;
-}
+} // namespace ZQF::Zut::ZxArg::Plat
