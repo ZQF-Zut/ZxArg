@@ -38,7 +38,7 @@ namespace ZQF::Zut::ZxArg
         std::string m_msAuthor;
         std::vector<std::string> m_vcArgData;
         std::vector<std::string_view> m_vcExample;
-        std::unordered_map<std::string_view, ZxArg::Value, string_hash, std::equal_to<>> m_mpCmd;
+        std::unordered_map<std::string_view, ZxArg::Value, string_hash, std::equal_to<>> m_mpOption;
 
     public:
         Parser()
@@ -66,11 +66,11 @@ namespace ZQF::Zut::ZxArg
 
                 if ((value.size()) && (value.front() == '\"') && (value.back() == '\"'))
                 {
-                    m_mpCmd[option].SetValue(value.substr(1, value.size() - 2));
+                    m_mpOption[option].SetValue(value.substr(1, value.size() - 2));
                 }
                 else
                 {
-                    m_mpCmd[option].SetValue(value);
+                    m_mpOption[option].SetValue(value);
                 }
             }
 
@@ -115,8 +115,8 @@ namespace ZQF::Zut::ZxArg
                 help_log.append("Author : ").append(m_msAuthor).append(1, '\n');
             }
 
-            help_log.append("Command:\n");
-            for (const auto& cmd : m_mpCmd)
+            help_log.append("Option :\n");
+            for (const auto& cmd : m_mpOption)
             {
                 help_log
                     .append(1, '\t')
@@ -141,9 +141,9 @@ namespace ZQF::Zut::ZxArg
             std::printf(help_log.c_str());
         }
 
-        auto AddCmd(const std::string_view msOption, const std::string_view msHelp, const std::string_view msDefaultVal = "") -> void
+        auto AddOption(const std::string_view msOption, const std::string_view msHelp, const std::string_view msDefaultVal = "") -> void
         {
-            auto& val_ref = m_mpCmd[msOption];
+            auto& val_ref = m_mpOption[msOption];
             val_ref.SetHelp(msHelp);
             if (!msDefaultVal.empty()) { val_ref.SetValue(msDefaultVal); }
         }
@@ -168,7 +168,7 @@ namespace ZQF::Zut::ZxArg
 
         auto operator[](const std::string_view msOption) const -> const Value&
         {
-            if (const auto ite_map = m_mpCmd.find(msOption); ite_map != m_mpCmd.end())
+            if (const auto ite_map = m_mpOption.find(msOption); ite_map != m_mpOption.end())
             {
                 if (ite_map->second.GetValue().empty())
                 {

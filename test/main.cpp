@@ -57,12 +57,12 @@
     const char* argv[] = { "game.exe", "-mode", "batch", "-name", "\"[061215][EX12] 雛鳥の堕ちる音\"", "-ver", "1.2", "-size", "10", "-make", "false", "-export", "true" };
 
     ZxArg::Parser arg;
-    arg.AddCmd("-name", "game name in filter json file");
-    arg.AddCmd("-mode", "mode: [batch]");
-    arg.AddCmd("-ver", "version");
-    arg.AddCmd("-size", "game size");
-    arg.AddCmd("-make", "make data");
-    arg.AddCmd("-export", "export data");
+    arg.AddOption("-name", "game name in filter json file");
+    arg.AddOption("-mode", "mode: [batch]");
+    arg.AddOption("-ver", "version");
+    arg.AddOption("-size", "game size");
+    arg.AddOption("-make", "make data");
+    arg.AddOption("-export", "export data");
 
     arg.AddExample("-ver 1.3 -size 11 -export fale");
     arg.AddExample("-mode batch -size 11 -make true");
@@ -85,11 +85,11 @@
     ZxArg::Parser arg;
     arg.SetAbout("this is a demo");
     arg.SetAuthor("github.com/Dir-A");
-    arg.AddCmd("-name", "your name [default=xiao]", "xiao");
-    arg.AddCmd("-sex", "your sex");
-    arg.AddCmd("-age", "your age");
-    arg.AddCmd("-weight", "your weight");
-    arg.AddCmd("-furry", "furry or not");
+    arg.AddOption("-name", "your name [default=xiao]", "xiao");
+    arg.AddOption("-sex", "your sex");
+    arg.AddOption("-age", "your age");
+    arg.AddOption("-weight", "your weight");
+    arg.AddOption("-furry", "furry or not");
     arg.AddExample("-name xiao -sex male -age 16 -furry true -weight 55.5");
     
     if (!arg.Parse()) { return; }
