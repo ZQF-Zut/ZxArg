@@ -11,6 +11,8 @@ Command Line Parser
 auto main(void) -> int
 {
     ZxArg::Parser arg;
+    arg.SetAbout("this is a demo");
+    arg.SetAuthor("github.com/Dir-A");
     arg.AddCmd("-name", "your name [default=xiao]", "xiao");
     arg.AddCmd("-sex", "your sex");
     arg.AddCmd("-age", "your age");
@@ -32,12 +34,14 @@ auto main(void) -> int
 
 ```shell
 > ZxArg_Test.exe
+About  : this is a demo
+Author : github.com/Dir-A
 Command:
-        -age    your age
-        -name   your name [default=xiao]
-        -furry  furry or not
-        -sex    your sex
-        -weight your weight
+        -furry   -> furry or not
+        -weight  -> your weight
+        -sex     -> your sex
+        -age     -> your age
+        -name    -> your name [default=xiao]
 Example:
         ./ZxArg_Test.exe -name xiao -sex male -age 16 -furry true -weight 55.5
         ./ZxArg_Test.exe -name lee -sex female -age 15 -furry false -weight 50.65
