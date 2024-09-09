@@ -33,7 +33,7 @@ auto main(void) -> int
 ```
 
 ```shell
-> ZxArg_Test.exe
+> ./ZxArg_Test
 About  : this is a demo
 Author : github.com/Dir-A
 Command:
@@ -43,13 +43,13 @@ Command:
         -age     -> your age
         -name    -> your name [default=xiao]
 Example:
-        ./ZxArg_Test.exe -name xiao -sex male -age 16 -furry true -weight 55.5
-        ./ZxArg_Test.exe -name lee -sex female -age 15 -furry false -weight 50.65
+        ./ZxArg_Test -name xiao -sex male -age 16 -furry true -weight 55.5
+        ./ZxArg_Test -name lee -sex female -age 15 -furry false -weight 50.65
 ```
 
 ```shell
-> ./ZxArg_Test.exe -name xiao -sex male -age 16 -furry true -weight 55.5
+> ./ZxArg_Test -name xiao -sex male -age 16 -furry true -weight 55.5
 Your name is xiao, male, 16 years old, 55.5kg, furry.
-> ./ZxArg_Test.exe -sex male -age 16 -furry true -weight 55.5
+> ./ZxArg_Test -sex male -age 16 -furry true -weight 55.5
 Your name is xiao, male, 16 years old, 55.5kg, furry.
 ```
