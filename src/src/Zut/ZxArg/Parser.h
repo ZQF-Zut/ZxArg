@@ -115,7 +115,7 @@ namespace ZQF::Zut::ZxArg
                 help_log.append("Author : ").append(m_msAuthor).append(1, '\n');
             }
 
-            help_log.append("Option :\n");
+            help_log.append("Options:\n");
             for (const auto& cmd : m_mpOption)
             {
                 help_log
