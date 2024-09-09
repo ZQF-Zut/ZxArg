@@ -36,7 +36,7 @@ auto main(void) -> int
 > ./ZxArg_Test
 About  : this is a demo
 Author : github.com/Dir-A
-Option :
+Options:
         -furry   -> furry or not
         -weight  -> your weight
         -sex     -> your sex
