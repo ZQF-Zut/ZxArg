@@ -13,11 +13,11 @@ auto main(void) -> int
     ZxArg::Parser arg;
     arg.SetAbout("this is a demo");
     arg.SetAuthor("github.com/Dir-A");
-    arg.AddCmd("-name", "your name [default=xiao]", "xiao");
-    arg.AddCmd("-sex", "your sex");
-    arg.AddCmd("-age", "your age");
-    arg.AddCmd("-weight", "your weight");
-    arg.AddCmd("-furry", "furry or not");
+    arg.AddOption("-name", "your name [default=xiao]", "xiao");
+    arg.AddOption("-sex", "your sex");
+    arg.AddOption("-age", "your age");
+    arg.AddOption("-weight", "your weight");
+    arg.AddOption("-furry", "furry or not");
     arg.AddExample("-name xiao -sex male -age 16 -furry true -weight 55.5");
     arg.AddExample("-name lee -sex female -age 15 -furry false -weight 50.65");
 
@@ -36,7 +36,7 @@ auto main(void) -> int
 > ./ZxArg_Test
 About  : this is a demo
 Author : github.com/Dir-A
-Command:
+Option :
         -furry   -> furry or not
         -weight  -> your weight
         -sex     -> your sex
