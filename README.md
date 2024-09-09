@@ -1,16 +1,16 @@
 # ZxArg
-Command Line Parser Without argc and argv
+Command Line Parser
 
 ## Example
 ```cpp
 #include <print>
 #include <iostream>
-#include <ZxArg/Parser.h>
+#include <Zut/ZxArg.h>
 
 
 auto main(void) -> int
 {
-    ZQF::ZxArg::Parser arg;
+    ZxArg::Parser arg;
     arg.AddCmd("-name", "your name [default=xiao]", "xiao");
     arg.AddCmd("-sex", "your sex");
     arg.AddCmd("-age", "your age");
