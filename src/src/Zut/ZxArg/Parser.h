@@ -131,7 +131,11 @@ namespace ZQF::Zut::ZxArg
             {
                 help_log
                     .append(1, '\t')
+#ifdef _WIN32
+                    .append(".\\")
+#elif __linux__
                     .append("./")
+#endif // _WIN32
                     .append(exe_name)
                     .append(1, ' ')
                     .append(exp)
