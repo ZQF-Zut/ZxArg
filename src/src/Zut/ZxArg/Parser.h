@@ -142,7 +142,7 @@ namespace ZQF::Zut::ZxArg
                     .append(1, '\n');
             }
 
-            std::printf(help_log.c_str());
+            std::printf("%s", help_log.c_str());
         }
 
         auto AddOption(const std::string_view msOption, const std::string_view msHelp, const std::string_view msDefaultVal = "") -> void
@@ -167,8 +167,8 @@ namespace ZQF::Zut::ZxArg
             m_msAuthor.assign(msAuthor);
         }
 
-        auto operator[](int) -> const Value& = delete;
-        auto operator[](std::size_t) -> const Value& = delete;
+        auto operator[](int) -> const Value & = delete;
+        auto operator[](std::size_t) -> const Value & = delete;
 
         auto operator[](const std::string_view msOption) const -> const Value&
         {
@@ -176,7 +176,7 @@ namespace ZQF::Zut::ZxArg
             {
                 if (ite_map->second.GetValue().empty())
                 {
-                    throw std::runtime_error(std::string{ "ZxArg::Parser::operator[](): arg is empty! -> "}.append(msOption));
+                    throw std::runtime_error(std::string{ "ZxArg::Parser::operator[](): arg is empty! -> " }.append(msOption));
                 }
 
                 return ite_map->second;
