@@ -1,5 +1,26 @@
 #include "Plat.h"
-#include <memory>
+
+
+namespace ZQF::Zut::ZxArg::Plat
+{
+    auto CMDLineData::ParseCMD(const int argc, const char** const argv) -> void
+    {
+        for (std::size_t idx{}; idx < argc; idx++)
+        {
+            m_vcCMD.emplace_back(argv[idx]);
+        }
+    }
+
+    auto CMDLineData::GetRawStrView() const -> std::string_view
+    {
+        return { m_RawStr.second.get(), m_RawStr.first };
+    }
+
+    auto CMDLineData::GetVec() const -> const std::vector<std::string_view>&
+    {
+        return m_vcCMD;
+    }
+}
 
 
 #ifdef _WIN32
@@ -10,49 +31,51 @@
 
 namespace ZQF::Zut::ZxArg::Plat
 {
-    auto GetCmdLine() -> std::vector<std::string>
+    auto CMDLineData::LoadRawStr() -> void
     {
-        auto [cmd_line_bytes, cmd_line_buffer] = []() -> std::pair<size_t, std::unique_ptr<char[]>>
-            {
-                auto cmd_line_ptr = ::GetCommandLineW();
-                auto cmd_line_chars = ::wcslen(cmd_line_ptr);
+        const auto cmd_line_ptr{ ::GetCommandLineW() };
+        const auto cmd_line_chars{ ::wcslen(cmd_line_ptr) };
 
-                const size_t buffer_max_bytes = (cmd_line_chars * sizeof(wchar_t) + 1) * 2;
-                auto buffer = std::make_unique_for_overwrite<char[]>(buffer_max_bytes);
-                const auto bytes_real = static_cast<size_t>(::WideCharToMultiByte(CP_UTF8, 0, cmd_line_ptr, static_cast<int>(cmd_line_chars), buffer.get(), static_cast<int>(buffer_max_bytes), nullptr, nullptr));
-                buffer[bytes_real] = {};
+        const auto buffer_max_bytes{ (cmd_line_chars * sizeof(wchar_t) + 1) * 2 };
+        auto buffer{ std::make_unique_for_overwrite<char[]>(buffer_max_bytes) };
+        const auto bytes_real{ static_cast<std::size_t>(::WideCharToMultiByte(CP_UTF8, 0, cmd_line_ptr, static_cast<int>(cmd_line_chars), buffer.get(), static_cast<int>(buffer_max_bytes), nullptr, nullptr)) };
+        buffer[bytes_real] = {};
 
-                return { static_cast<size_t>(bytes_real), std::move(buffer) };
-    }();
+        m_RawStr = { static_cast<std::size_t>(bytes_real), std::move(buffer) };
+    }
 
-        std::vector<std::string> cmd_line_vec;
+    auto CMDLineData::ParseCMD() -> void
+    {
+        const auto cmd_line_str{ this->GetRawStrView() };
 
-        std::string_view cmd_line_str{ cmd_line_buffer.get(), cmd_line_bytes };
-
-        // parse
-        size_t sub_str_beg{};
-        for (size_t idx{}; idx < cmd_line_str.size(); idx++)
+        // parse command line
+        std::size_t sub_str_beg{};
+        for (std::size_t idx{}; idx < cmd_line_str.size(); idx++)
         {
-            const char cur_char = cmd_line_str[idx];
+            const char cur_char{ cmd_line_str[idx] };
             if (cur_char == '"')
             {
-                if (auto pos = cmd_line_str.find('"', idx + 1);pos != std::string_view::npos)
+                if (const auto pos{ cmd_line_str.find('"', idx + 1) }; pos != std::string_view::npos)
                 {
                     idx = pos;
                 }
                 else
                 {
-                    throw std::runtime_error("ZxArg::GetCmdLine(): error cmd line!");
+                    throw std::runtime_error("ZxArg::CMDLineData::ParseCMD(): error command line!");
                 }
             }
             else if (cur_char == ' ')
             {
-                const char* beg_ptr = cmd_line_str.data() + sub_str_beg;
-                const char* end_ptr = cmd_line_str.data() + idx;
-                cmd_line_vec.emplace_back(std::string{ beg_ptr, end_ptr });
+                m_vcCMD.emplace_back(cmd_line_str.data() + sub_str_beg, cmd_line_str.data() + idx);
 
                 // skip white
-                for (; idx < cmd_line_str.size(); idx++) { if (cmd_line_str[idx] != ' ') { break; } }
+                for (; idx < cmd_line_str.size(); idx++) 
+                {
+                    if (cmd_line_str[idx] != ' ')
+                    {
+                        break;
+                    }
+                }
 
                 sub_str_beg = idx;
                 idx -= 1;
@@ -62,20 +85,21 @@ namespace ZQF::Zut::ZxArg::Plat
         // read last value
         if (sub_str_beg < cmd_line_str.size())
         {
-            cmd_line_vec.emplace_back(std::string{ cmd_line_str.data() + sub_str_beg , cmd_line_str.data() + cmd_line_str.size() });
+            m_vcCMD.emplace_back(cmd_line_str.data() + sub_str_beg, cmd_line_str.data() + cmd_line_str.size());
         }
 
         // format exe path
-        if (cmd_line_vec.size())
-        {
-            for (auto& char_v : cmd_line_vec.front())
-            {
-                if (char_v == '\\') { char_v = '/'; }
-            }
-        }
-
-        return cmd_line_vec;
-}
+        //if (info.m_vcCMD.size())
+        //{
+        //    for (auto& char_v : info.m_vcCMD.front())
+        //    {
+        //        if (char_v == '\\')
+        //        {
+        //            char_v = '/';
+        //        }
+        //    }
+        //}
+    }
 } // namespace ZQF::Zut::ZxArg::Plat
 #elif __linux__
 #include <limits.h>
