@@ -1,6 +1,12 @@
 # ZxArg
 Command Line Parser
 
+## Features
+- Modern C++ based
+- Cross-platform
+- UTF-8 support
+- No argc and argv
+
 ## Example
 ```cpp
 #include <print>
