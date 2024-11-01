@@ -41,6 +41,16 @@ namespace ZQF::Zut::ZxArg::Plat
         const auto bytes_real{ static_cast<std::size_t>(::WideCharToMultiByte(CP_UTF8, 0, cmd_line_ptr, static_cast<int>(cmd_line_chars), buffer.get(), static_cast<int>(buffer_max_bytes), nullptr, nullptr)) };
         buffer[bytes_real] = {};
 
+        // format exe path
+        for (std::size_t idx = 0; idx < bytes_real; idx++)
+        {
+            auto& char_v = buffer[idx];
+            if (char_v == '\\')
+            {
+                char_v = '/';
+            }
+        }
+
         m_RawStr = { static_cast<std::size_t>(bytes_real), std::move(buffer) };
     }
 
