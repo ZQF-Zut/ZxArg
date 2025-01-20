@@ -5,7 +5,7 @@ namespace ZQF::Zut::ZxArg::Plat
 {
     auto CMDLineData::ParseCMD(const int argc, const char** const argv) -> void
     {
-        for (std::size_t idx{}; idx < argc; idx++)
+        for (int idx{}; idx < argc; idx++)
         {
             m_vcCMD.emplace_back(argv[idx]);
         }
@@ -119,29 +119,26 @@ namespace ZQF::Zut::ZxArg::Plat
 
 namespace ZQF::Zut::ZxArg::Plat
 {
-    auto GetCmdLine() -> std::vector<std::string>
+    auto CMDLineData::LoadRawStr() -> void
     {
-        auto fn_get_cmd_line_data = []() -> std::pair<size_t, std::unique_ptr<char[]>>
-            {
-                const auto arg_max_bytes = ::sysconf(_SC_ARG_MAX);
-                auto arg_buffer = std::make_unique_for_overwrite<char[]>(arg_max_bytes);
-                const auto fd = ::open("/proc/self/cmdline", O_RDONLY);
-                const auto arg_bytes = ::read(fd, arg_buffer.get(), arg_max_bytes);
-                ::close(fd);
-                return { static_cast<size_t>(arg_bytes), std::move(arg_buffer) };
-            };
+        const auto arg_max_bytes = ::sysconf(_SC_ARG_MAX);
+        auto arg_buffer = std::make_unique_for_overwrite<char[]>(arg_max_bytes);
+        const auto fd = ::open("/proc/self/cmdline", O_RDONLY);
+        const auto arg_bytes = ::read(fd, arg_buffer.get(), arg_max_bytes);
+        ::close(fd);
+        m_RawStr = { static_cast<std::size_t>(arg_bytes), std::move(arg_buffer) };
+    }
 
-        auto [arg_size_bytes, arg_buffer] = fn_get_cmd_line_data();
-
-        std::vector<std::string> cmd_line_vec;
-        for (size_t idx = 0; idx < arg_size_bytes; idx++)
+    auto CMDLineData::ParseCMD() -> void
+    {
+        const auto arg_buffer_ptr = m_RawStr.second.get();
+        const auto arg_size_bytes = m_RawStr.first;
+        for (std::size_t idx = 0; idx < arg_size_bytes; idx++)
         {
-            std::string_view val = arg_buffer.get() + idx;
+            std::string_view val{ arg_buffer_ptr + idx };
             idx += val.size();
-            cmd_line_vec.emplace_back(val);
+            m_vcCMD.emplace_back(val);
         }
-
-        return cmd_line_vec;
     }
 } // namespace ZQF::Zut::ZxArg::Plat
 #endif
